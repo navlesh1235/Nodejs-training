@@ -9,7 +9,7 @@ class AuthService {
       throw new ApiError(400, 'Email is already registered');
     }
 
-    const user = await User.create(userData);
+    const user = await User.create({ ...userData, role: 'user' });
     const token = generateToken(user._id);
 
     return {
@@ -18,8 +18,12 @@ class AuthService {
     };
   }
 
+  // service controllers ko user infomations return kar rahi hai
+
   async login(email, password) {
+    // console.log(password,"req.body");
     const user = await User.findOne({ email }).select('+password');
+    // console.log(user);
     if (!user || !(await user.matchPassword(password))) {
       throw new ApiError(401, 'Invalid email or password');
     }
